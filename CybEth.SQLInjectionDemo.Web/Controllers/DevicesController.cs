@@ -6,11 +6,6 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
     [Route("[controller]")]
     public class DevicesController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
         private readonly ILogger<DevicesController> _logger;
 
         public DevicesController(ILogger<DevicesController> logger)
