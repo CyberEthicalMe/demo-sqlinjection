@@ -38,7 +38,7 @@ export class Home extends Component {
                     {devices.map(d =>
                         <tr key={d.id}>
                             <td>{d.name}</td>
-                            <td>{d.price}</td>
+                            <td>{d.cost}</td>
                         </tr>
                     )}
                 </tbody>
