@@ -10,6 +10,7 @@ namespace CybEth.SQLInjectionDemo.Web
             // Add services to the container.
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext
 
             var app = builder.Build();
 
