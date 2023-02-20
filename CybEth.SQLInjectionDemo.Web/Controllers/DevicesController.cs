@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CybEth.SQLInjectionDemo.Web.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CybEth.SQLInjectionDemo.Web.Controllers
 {
@@ -16,13 +18,9 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
         [HttpGet]
         public IEnumerable<Device> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new Device
-            {
-                Id = index,
-                Name = Random.Shared.Next().ToString(),
-                Price = Random.Shared.Next().ToString()
-            })
-            .ToArray();
+            var context = new ContosoDbTestContext();
+            var result = context.Devices.FromSqlRaw<Device>("select * from devices");
+            return result.ToArray();
         }
     }
 }
