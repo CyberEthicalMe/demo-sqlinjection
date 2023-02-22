@@ -36,7 +36,6 @@ public partial class ContosoDbTestContext : DbContext
         modelBuilder.Entity<Device>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Cost).HasColumnType("decimal(18, 0)");
         });
 
         OnModelCreatingPartial(modelBuilder);
