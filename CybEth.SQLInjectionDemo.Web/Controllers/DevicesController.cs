@@ -11,10 +11,12 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
     public class DevicesController : ControllerBase
     {
         private readonly ILogger<DevicesController> _logger;
+        private readonly IConfiguration _config;
 
-        public DevicesController(ILogger<DevicesController> logger)
+        public DevicesController(ILogger<DevicesController> logger, IConfiguration config)
         {
             _logger = logger;
+            _config = config;
         }
 
         [HttpGet]
@@ -27,13 +29,13 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
                     return BadRequest(JsonSerializer.Serialize(new { Reason = "Invalid query" }));
                 }
 
-                var context = new ContosoDbTestContext();
+                var context = new ContosoDbTestContext(this._config["Contoso:DbString"] ?? string.Empty);
                 var result = context.Devices.FromSqlRaw<Device>("select * from devices " + filterQuery);
                 return Ok(result.ToArray());
             }
             catch
             {
-                return BadRequest();
+                return StatusCode(500, JsonSerializer.Serialize(new { Reason = "Server Error" }));
             }
         }
 

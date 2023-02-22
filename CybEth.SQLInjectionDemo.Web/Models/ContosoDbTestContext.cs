@@ -4,8 +4,10 @@ namespace CybEth.SQLInjectionDemo.Web.Models;
 
 public partial class ContosoDbTestContext : DbContext
 {
-    public ContosoDbTestContext()
+    private readonly string _connectionString;
+    public ContosoDbTestContext(string connectionString)
     {
+        this._connectionString = connectionString;
     }
 
     public ContosoDbTestContext(DbContextOptions<ContosoDbTestContext> options)
@@ -18,7 +20,9 @@ public partial class ContosoDbTestContext : DbContext
     public virtual DbSet<Device> Devices { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=192.168.56.5;Database=ContosoDB_Test;User Id=dbaccess;Password=P@ssw0rd;Encrypt=false;");
+    {
+        optionsBuilder.UseSqlServer(this._connectionString);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
