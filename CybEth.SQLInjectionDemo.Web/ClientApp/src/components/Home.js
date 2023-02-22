@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 
 export class Home extends Component {
     static displayName = Home.name;
+    static defaultQuery = 'order by ID desc';
 
     constructor(props) {
         super(props);
-        this.state = { devices: [], loading: true };
+        this.state = { query: Home.defaultQuery, devices: [], loading: true, error: null };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.runQuery = this.runQuery.bind(this);
     }
 
     render() {
@@ -16,6 +20,12 @@ export class Home extends Component {
         return (
             <div>
                 <h1>Science devices for your science fantasies!</h1>
+                <label>
+                    Filter expression:<br />
+                    <textarea name="query" value={this.state.query} onChange={this.handleChange}></textarea><br />
+                    <div style={{ color: 'darkred' }}>{this.state.error}</div>
+                </label><br />
+                <input type="button" value="Filter" onClick={this.runQuery} />
                 {listing}
             </div>
         );
@@ -23,6 +33,14 @@ export class Home extends Component {
 
     componentDidMount() {
         this.populateData();
+    }
+
+    runQuery(event) {
+        this.populateData();
+    }
+
+    handleChange(event) {
+        this.setState({ query: event.target.value });
     }
 
     static renderTable(devices) {
@@ -47,8 +65,19 @@ export class Home extends Component {
     }
 
     async populateData() {
-        const response = await fetch('devices');
-        const data = await response.json();
-        this.setState({ devices: data, loading: false });
+        this.setState({ devices: [], loading: true, error: null });
+
+        fetch('devices?filterQuery=' + this.state.query)
+            .then(async response => {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const error = (data && data.Reason) || response.statusText;
+                    this.setState({ loading: false, error: error });
+                }
+                else {
+                    this.setState({ devices: data, loading: false });
+                }
+            })
     }
 }

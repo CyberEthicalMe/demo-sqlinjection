@@ -1,4 +1,6 @@
-﻿using CybEth.SQLInjectionDemo.Web.Models;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using CybEth.SQLInjectionDemo.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +18,33 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Device> Get()
+        public IActionResult Get(string filterQuery)
         {
-            var context = new ContosoDbTestContext();
-            var result = context.Devices.FromSqlRaw<Device>("select * from devices");
-            return result.ToArray();
+            try
+            {
+                if (!this.QueryValid(filterQuery))
+                {
+                    return BadRequest(JsonSerializer.Serialize(new { Reason = "Invalid query" }));
+                }
+
+                var context = new ContosoDbTestContext();
+                var result = context.Devices.FromSqlRaw<Device>("select * from devices " + filterQuery);
+                return Ok(result.ToArray());
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        private bool QueryValid(string filterQuery)
+        {
+            if (filterQuery.Contains("delete"))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
