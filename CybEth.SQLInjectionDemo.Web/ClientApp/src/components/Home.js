@@ -49,7 +49,7 @@ export class Home extends Component {
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Price</th>
+                        <th>Cost</th>
                     </tr>
                 </thead>
                 <tbody>
