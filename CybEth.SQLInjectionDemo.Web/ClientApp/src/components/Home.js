@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export class Home extends Component {
     static displayName = Home.name;
-    static defaultQuery = 'order by ID desc';
+    static defaultQuery = 'order by cost desc';
 
     constructor(props) {
         super(props);
