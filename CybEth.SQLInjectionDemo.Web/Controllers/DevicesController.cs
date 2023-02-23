@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using CybEth.SQLInjectionDemo.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,7 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
         {
             try
             {
-                if (!this.QueryValid(filterQuery))
+                if (!QueryValid(filterQuery))
                 {
                     return BadRequest(JsonSerializer.Serialize(new { Reason = "Invalid query" }));
                 }
@@ -39,11 +38,20 @@ namespace CybEth.SQLInjectionDemo.Web.Controllers
             }
         }
 
-        private bool QueryValid(string filterQuery)
+        private static bool QueryValid(string filterQuery)
         {
-            if (filterQuery.Contains("delete"))
+            var bannedWords = new string[] {
+                ";", "create", "table", "primary key", "foreign key",
+                "index", "alter", "drop", "truncate", "insert", "update",
+                "delete", "--", "{", "}"
+            };
+
+            foreach(var bannedWord in bannedWords)
             {
-                return false;
+                if (filterQuery.Contains(bannedWord, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return false;
+                }
             }
 
             return true;
